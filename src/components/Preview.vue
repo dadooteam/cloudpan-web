@@ -1,13 +1,6 @@
 <template>
     <div class="weui-tab__panel">
-        <div class="weui-gallery" style="display: block">
-            <span class="weui-gallery__img" v-bind:style="{ backgroundImage: url }"></span>
-            <div class="weui-gallery__opr">
-                <a href="javascript:" class="weui-gallery__del">
-                    <i class="weui-icon-delete weui-icon_gallery-delete"></i>
-                </a>
-            </div>
-        </div>
+      <img v-bind:src="url" width="100%">
     </div>
 </template>
 
@@ -16,7 +9,7 @@ export default {
   name: 'Preview',
   data () {
     return {
-      url: ''
+      url: '/static/img/mkdir.png'
     }
   },
   mounted: function () {
@@ -27,14 +20,21 @@ export default {
   },
   methods: {
     item: function () {
-      let path = this.$route.query.path
-      this.$http.get('http://api.dadoo.im:7777/pan/download?path=' + path).then(response => {
+      let options = {
+        params: {
+          path: this.$route.query.path
+        },
+        progress: (event) => {
+          // console.log(event)
+        }
+      }
+      this.$http.get('http://api.dadoo.im:7777/pan/download', options).then(response => {
         return response.blob()
       }).then(blob => {
         let reader = new FileReader()
         reader.readAsDataURL(blob)
         reader.onload = () => {
-          this.url = 'url(' + reader.result + ')'
+          this.url = reader.result
         }
       })
     }

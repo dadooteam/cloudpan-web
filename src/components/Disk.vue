@@ -54,12 +54,31 @@ export default {
   },
   methods: {
     click: function (item) {
-      if (item.type === 2) {
-        this.$router.push({name: 'Disk', query: { path: item.path }})
-      } else {
+      if (item.type === 1) {
+        let menu = []
+        menu.push({
+          label: '下载',
+          onClick: () => {
+            console.log('下载')
+          }
+        })
+        menu.push({
+          label: '基本信息',
+          onClick: () => {
+            console.log('基本信息')
+          }
+        })
         if (item.mime && item.mime.startsWith('image/')) {
-          this.$router.push({name: 'Preview', query: { path: item.path }})
+          menu.unshift({
+            label: '预览',
+            onClick: () => {
+              this.$router.push({name: 'Preview', query: { path: item.path }})
+            }
+          })
         }
+        weui.actionSheet(menu)
+      } else if (item.type === 2) {
+        this.$router.push({name: 'Disk', query: { path: item.path }})
       }
     },
     list: function () {
