@@ -1,6 +1,6 @@
 <template>
     <div class="weui-tab__panel">
-      <img v-bind:src="url" width="100%">
+      <img v-bind:src="url" width="100%" v-bind:class="{loading:isLoading}">
     </div>
 </template>
 
@@ -9,7 +9,8 @@ export default {
   name: 'Preview',
   data () {
     return {
-      url: '/static/img/mkdir.png'
+      isLoading: true,
+      url: '/static/img/loading.png'
     }
   },
   mounted: function () {
@@ -28,14 +29,9 @@ export default {
           // console.log(event)
         }
       }
-      this.$http.get('http://api.dadoo.im:7777/pan/download', options).then(response => {
-        return response.blob()
-      }).then(blob => {
-        let reader = new FileReader()
-        reader.readAsDataURL(blob)
-        reader.onload = () => {
-          this.url = reader.result
-        }
+      this.$http.get('http://api.dadoo.im:7777/pan/preview', options).then(response => {
+        this.url = response.body.data
+        this.isLoading = false
       })
     }
   }

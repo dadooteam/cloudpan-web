@@ -4,10 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=1">
     <link href="https://res.wx.qq.com/open/libs/weui/1.1.1/weui.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet">
     <!--<link href="//at.alicdn.com/t/font_j8ss975lcxj62yb9.css" rel="stylesheet">-->
-    <title>cloudpan-web</title>
+    <link href="http://vjs.zencdn.net/5.16.0/video-js.css" rel="stylesheet">
+
+    <!-- If you'd like to support IE8 -->
+    <script src="http://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script>
+    <title>Dadoo Pan</title>
   </head>
   <body>
+    <video id="my-video" class="video-js" controls preload="auto" width="640" height="264" poster="MY_VIDEO_POSTER.jpg" data-setup="{}">
+      <source src="http://api.dadoo.im:7777/pan/download?path=aaa/wx_camera_1485514880668.mp4&__t=a7997661ebca1f6294aaa6b0bcdb9631" type='video/mp4'>
+      <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a web browser that
+        <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+      </p>
+    </video>
     <div id="app"></div>
     <!-- built files will be auto injected -->
   </body>

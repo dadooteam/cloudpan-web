@@ -1,5 +1,6 @@
 <template>
     <div class="weui-tab__panel">
+        <a id="download"></a>
         <div class="weui-flex">
             <div class="weui-flex__item">
                 <div class="placeholder">
@@ -26,7 +27,7 @@
         <div class="weui-cells">
             <div class="weui-cell weui-cell_access" v-for="item in items" v-on:click="click(item)">
                 <div class="weui-cell__hd">
-                    <img v-bind:src="item.icon" style="width:20px;margin-right:5px;display:block">
+                    <img v-bind:src="item.thumbnail" style="width:20px;margin-right:5px;display:block">
                 </div>
                 <div class="weui-cell__bd">
                     <p>{{item.name}}</p>
@@ -59,7 +60,9 @@ export default {
         menu.push({
           label: '下载',
           onClick: () => {
-            console.log('下载')
+            let download = document.getElementById('download')
+            download.setAttribute('href', `http://api.dadoo.im:7777/pan/download?path=${item.path}&__t=${localStorage.token}`)
+            download.click()
           }
         })
         menu.push({
@@ -83,45 +86,30 @@ export default {
     },
     list: function () {
       let path = this.$route.query.path
-      if (path === undefined || path === '') {
-        this.$http.get('http://api.dadoo.im:7777/pan/list').then(response => {
-          let items = response.body.data
-          for (let item of items) {
-            if (item.type === 1) {
-              item.icon = '/static/img/file.png'
-              if (item.size < 1000000) {
-                item.size = Math.round(item.size / 1000) + 'K'
-              } else if (item.size < 1000000000) {
-                item.size = Math.round(item.size / 1000000) + 'M'
-              } else if (item.size < 1000000000000) {
-                item.size = Math.round(item.size / 1000000000) + 'G'
-              }
-            } else if (item.type === 2) {
-              item.icon = '/static/img/dir.png'
-            }
-          }
-          this.items = items
-        })
-      } else {
-        this.$http.get('http://api.dadoo.im:7777/pan/list?path=' + path).then(response => {
-          let items = response.body.data
-          for (let item of items) {
-            if (item.type === 1) {
-              item.icon = '/static/img/file.png'
-              if (item.size < 1000000) {
-                item.size = Math.round(item.size / 1000) + 'K'
-              } else if (item.size < 1000000000) {
-                item.size = Math.round(item.size / 1000000) + 'M'
-              } else if (item.size < 1000000000000) {
-                item.size = Math.round(item.size / 1000000000) + 'G'
-              }
-            } else if (item.type === 2) {
-              item.icon = '/static/img/dir.png'
-            }
-          }
-          this.items = items
-        })
+      let params = {}
+      if (path) {
+        params.path = path
       }
+      this.$http.get('http://api.dadoo.im:7777/pan/list', {params}).then(response => {
+        let items = response.body.data
+        for (let item of items) {
+          if (item.type === 1) {
+            if (!item.thumbnail) {
+              item.thumbnail = '/static/img/file.png'
+            }
+            if (item.size < 1000000) {
+              item.size = Math.round(item.size / 1000) + 'K'
+            } else if (item.size < 1000000000) {
+              item.size = Math.round(item.size / 1000000) + 'M'
+            } else if (item.size < 1000000000000) {
+              item.size = Math.round(item.size / 1000000000) + 'G'
+            }
+          } else if (item.type === 2) {
+            item.thumbnail = '/static/img/dir.png'
+          }
+        }
+        this.items = items
+      })
     },
     mkdir: function () {
       let name = prompt('请输入文件夹名', '')
@@ -130,13 +118,11 @@ export default {
         if (path) {
           this.$http.post('http://api.dadoo.im:7777/pan/mkdir', {path, name}).then(response => {
             let r = response.body
-            console.log(r.status)
             this.$router.push({name: 'Disk', query: { path: r.data.path }})
           })
         } else {
           this.$http.post('http://api.dadoo.im:7777/pan/mkdir', {name}).then(response => {
             let r = response.body
-            console.log(r.status)
             this.$router.push({name: 'Disk', query: { path: r.data.path }})
           })
         }
@@ -148,9 +134,7 @@ export default {
       if (path) {
         formdata.append('path', path)
       }
-      console.log(e.target.files[0])
       formdata.append('file', e.target.files[0])
-      console.log(formdata)
       this.$http.post('http://api.dadoo.im:7777/pan/upload', formdata).then(response => {
         weui.toast('操作完成', 2000)
         this.list()
