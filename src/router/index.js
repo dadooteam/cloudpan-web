@@ -7,6 +7,7 @@ import Hello from 'components/Hello'
 import User from 'components/User'
 import Disk from 'components/Disk'
 import Preview from 'components/Preview'
+import Player from 'components/Player'
 import SignIn from 'components/SignIn'
 import Task from 'components/Task'
 
@@ -32,6 +33,11 @@ let router = new Router({
       name: 'Preview',
       component: Preview,
       path: '/preview'
+    },
+    {
+      name: 'Player',
+      component: Player,
+      path: '/player'
     },
     {
       name: 'User',

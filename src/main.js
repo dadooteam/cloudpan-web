@@ -12,6 +12,8 @@ Vue.http.interceptors.push((request, next) => {
   request.headers.set('Authorization', localStorage['token'])
   next(function (response) {
     if (response.status === 401) {
+      // 首先关掉所有加载图片
+      weui.loading().hide()
       weui.toast('token已过期，请重新登录', 1000)
       localStorage.clear()
       this.$router.push('/signin')
